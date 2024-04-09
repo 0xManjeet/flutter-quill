@@ -18,7 +18,6 @@ import '../others/text_selection.dart';
 import '../style_widgets/bullet_point.dart';
 import '../style_widgets/checkbox_point.dart';
 import '../style_widgets/number_point.dart';
-import '../toolbar/base_toolbar.dart';
 import 'quill_controller.dart';
 import 'text_line.dart';
 
@@ -214,16 +213,7 @@ class EditableTextBlock extends StatelessWidget {
     final attrs = line.style.attributes;
 
     // Of the color button
-    final fontColor =
-        line.toDelta().operations.first.attributes?[Attribute.color.key] != null
-            ? hexToColor(
-                line
-                    .toDelta()
-                    .operations
-                    .first
-                    .attributes?[Attribute.color.key],
-              )
-            : null;
+    const fontColor = null;
 
     // Of the size button
     final size =

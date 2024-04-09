@@ -1,7 +1,5 @@
 import 'dart:async' show StreamController;
 
-import 'package:meta/meta.dart';
-
 import '../../../quill_delta.dart';
 import '../../widgets/quill/embeds.dart';
 import '../rules/rule.dart';
@@ -10,7 +8,6 @@ import '../structs/history_changed.dart';
 import '../structs/offset_value.dart';
 import '../structs/segment_leaf_node.dart';
 import 'attribute.dart';
-import 'delta_x.dart';
 import 'history.dart';
 import 'nodes/block.dart';
 import 'nodes/container.dart';
@@ -464,12 +461,6 @@ class Document {
     return delta.length == 1 &&
         delta.first.data == '\n' &&
         delta.first.key == 'insert';
-  }
-
-  /// Convert the HTML Raw string to [Document]
-  @experimental
-  static Document fromHtml(String html) {
-    return Document.fromDelta(DeltaX.fromHtml(html));
   }
 }
 

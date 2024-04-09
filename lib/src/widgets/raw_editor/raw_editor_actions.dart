@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../models/documents/attribute.dart';
 import '../editor/editor.dart';
-import '../toolbar/buttons/link_style2_button.dart';
 import '../toolbar/buttons/search/search_dialog.dart';
 import 'raw_editor_state.dart';
 import 'raw_editor_text_boundaries.dart';
@@ -540,37 +539,6 @@ class QuillEditorApplyCheckListAction
 
   @override
   bool get isActionEnabled => true;
-}
-
-class QuillEditorApplyLinkIntent extends Intent {
-  const QuillEditorApplyLinkIntent();
-}
-
-class QuillEditorApplyLinkAction extends Action<QuillEditorApplyLinkIntent> {
-  QuillEditorApplyLinkAction(this.state);
-
-  final QuillRawEditorState state;
-
-  @override
-  Object? invoke(QuillEditorApplyLinkIntent intent) async {
-    final initialTextLink = QuillTextLink.prepare(state.controller);
-
-    final textLink = await showDialog<QuillTextLink>(
-      context: state.context,
-      builder: (context) {
-        return LinkStyleDialog(
-          text: initialTextLink.text,
-          link: initialTextLink.link,
-          dialogTheme: state.widget.configurations.dialogTheme,
-        );
-      },
-    );
-
-    if (textLink != null) {
-      textLink.submit(state.controller);
-    }
-    return null;
-  }
 }
 
 class QuillEditorInsertEmbedIntent extends Intent {

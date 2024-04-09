@@ -129,18 +129,6 @@ class QuillSimpleToolbar extends StatelessWidget
             options: toolbarConfigurations.buttonOptions.small,
             controller: globalController,
           ),
-        if (configurations.showColorButton)
-          QuillToolbarColorButton(
-            controller: globalController,
-            isBackground: false,
-            options: toolbarConfigurations.buttonOptions.color,
-          ),
-        if (configurations.showBackgroundColorButton)
-          QuillToolbarColorButton(
-            options: toolbarConfigurations.buttonOptions.backgroundColor,
-            controller: globalController,
-            isBackground: true,
-          ),
         if (configurations.showClearFormat)
           QuillToolbarClearFormatButton(
             controller: globalController,
@@ -277,15 +265,10 @@ class QuillSimpleToolbar extends StatelessWidget
             space: configurations.sectionDividerSpace,
           ),
         if (configurations.showLink)
-          toolbarConfigurations.linkStyleType.isOriginal
-              ? QuillToolbarLinkStyleButton(
-                  controller: globalController,
-                  options: toolbarConfigurations.buttonOptions.linkStyle,
-                )
-              : QuillToolbarLinkStyleButton2(
-                  controller: globalController,
-                  options: toolbarConfigurations.buttonOptions.linkStyle2,
-                ),
+          QuillToolbarLinkStyleButton(
+            controller: globalController,
+            options: toolbarConfigurations.buttonOptions.linkStyle,
+          ),
         if (configurations.showSearchButton)
           QuillToolbarSearchButton(
             controller: globalController,

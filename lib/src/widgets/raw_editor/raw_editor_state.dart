@@ -19,14 +19,10 @@ import 'package:flutter/services.dart'
         TextInputControl;
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart'
     show KeyboardVisibilityController;
-import 'package:html/parser.dart' as html_parser;
-import 'package:super_clipboard/super_clipboard.dart';
 
 import '../../models/documents/attribute.dart';
-import '../../models/documents/delta_x.dart';
 import '../../models/documents/document.dart';
 import '../../models/documents/nodes/block.dart';
-import '../../models/documents/nodes/embeddable.dart';
 import '../../models/documents/nodes/leaf.dart' as leaf;
 import '../../models/documents/nodes/line.dart';
 import '../../models/documents/nodes/node.dart';
@@ -34,7 +30,6 @@ import '../../models/structs/offset_value.dart';
 import '../../models/structs/vertical_spacing.dart';
 import '../../utils/cast.dart';
 import '../../utils/delta.dart';
-import '../../utils/embeds.dart';
 import '../../utils/platform.dart';
 import '../editor/editor.dart';
 import '../others/cursor.dart';
@@ -180,70 +175,9 @@ class QuillRawEditorState extends EditorState
       return;
     }
 
-    // When image copied internally in the editor
-    final copiedImageUrl = controller.copiedImageUrl;
-    if (copiedImageUrl != null) {
-      final index = textEditingValue.selection.baseOffset;
-      final length = textEditingValue.selection.extentOffset - index;
-      controller.replaceText(
-        index,
-        length,
-        BlockEmbed.image(copiedImageUrl.url),
-        null,
-      );
-      if (copiedImageUrl.styleString.isNotEmpty) {
-        controller.formatText(
-          getEmbedNode(controller, index + 1).offset,
-          1,
-          StyleAttribute(copiedImageUrl.styleString),
-        );
-      }
-      controller.copiedImageUrl = null;
-      await Clipboard.setData(
-        const ClipboardData(text: ''),
-      );
-      return;
-    }
-
     final selection = textEditingValue.selection;
     if (!selection.isValid) {
       return;
-    }
-
-    final clipboard = SystemClipboard.instance;
-
-    if (clipboard != null) {
-      final reader = await clipboard.read();
-      if (reader.canProvide(Formats.htmlText)) {
-        final html = await reader.readValue(Formats.htmlText);
-        if (html == null) {
-          return;
-        }
-        final htmlBody = html_parser.parse(html).body?.outerHtml;
-        final deltaFromClipboard = DeltaX.fromHtml(htmlBody ?? html);
-
-        controller.replaceText(
-          textEditingValue.selection.start,
-          textEditingValue.selection.end - textEditingValue.selection.start,
-          deltaFromClipboard,
-          TextSelection.collapsed(offset: textEditingValue.selection.end),
-        );
-
-        bringIntoView(textEditingValue.selection.extent);
-
-        // Collapse the selection and hide the toolbar and handles.
-        userUpdateTextEditingValue(
-          TextEditingValue(
-            text: textEditingValue.text,
-            selection: TextSelection.collapsed(
-              offset: textEditingValue.selection.end,
-            ),
-          ),
-          cause,
-        );
-
-        return;
-      }
     }
 
     // Snapshot the input before using `await`.
@@ -275,53 +209,6 @@ class QuillRawEditorState extends EditorState
       return;
     }
 
-    final onImagePaste = widget.configurations.onImagePaste;
-    if (onImagePaste != null) {
-      if (clipboard != null) {
-        final reader = await clipboard.read();
-        if (reader.canProvide(Formats.png)) {
-          reader.getFile(Formats.png, (value) async {
-            final image = value;
-
-            final imageUrl = await onImagePaste(await image.readAll());
-            if (imageUrl == null) {
-              return;
-            }
-
-            controller.replaceText(
-              textEditingValue.selection.end,
-              0,
-              BlockEmbed.image(imageUrl),
-              null,
-            );
-          });
-        }
-      }
-    }
-
-    final onGifPaste = widget.configurations.onGifPaste;
-    if (onGifPaste != null) {
-      if (clipboard != null) {
-        final reader = await clipboard.read();
-        if (reader.canProvide(Formats.gif)) {
-          reader.getFile(Formats.gif, (value) async {
-            final gif = value;
-
-            final gifUrl = await onGifPaste(await gif.readAll());
-            if (gifUrl == null) {
-              return;
-            }
-
-            controller.replaceText(
-              textEditingValue.selection.end,
-              0,
-              BlockEmbed.image(gifUrl),
-              null,
-            );
-          });
-        }
-      }
-    }
     return;
   }
 
@@ -712,11 +599,6 @@ class QuillRawEditorState extends EditorState
               meta: isDesktopMacOS,
               shift: true,
             ): const ToggleTextStyleIntent(Attribute.blockQuote),
-            SingleActivator(
-              LogicalKeyboardKey.keyK,
-              control: !isDesktopMacOS,
-              meta: isDesktopMacOS,
-            ): const QuillEditorApplyLinkIntent(),
 
             // Lists
             SingleActivator(
@@ -1769,7 +1651,6 @@ class QuillRawEditorState extends EditorState
     IndentSelectionIntent: _indentSelectionAction,
     QuillEditorApplyHeaderIntent: _applyHeaderAction,
     QuillEditorApplyCheckListIntent: _applyCheckListAction,
-    QuillEditorApplyLinkIntent: QuillEditorApplyLinkAction(this)
   };
 
   @override
