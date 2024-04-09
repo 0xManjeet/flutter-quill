@@ -61,8 +61,7 @@ class Operation {
   final Object? data;
 
   /// Rich-text attributes set by this operation, can be `null`.
-  Map<String, dynamic>? get attributes =>
-      _attributes == null ? null : Map<String, dynamic>.from(_attributes);
+  Map<String, dynamic>? get attributes =>_attributes;
   final Map<String, dynamic>? _attributes;
 
   /// Creates new [Operation] from JSON payload.
@@ -110,7 +109,7 @@ class Operation {
   bool get isRetain => key == Operation.retainKey;
 
   /// Returns `true` if this operation has no attributes, e.g. is plain text.
-  bool get isPlain => _attributes == null || _attributes.isEmpty;
+  bool get isPlain => _attributes?.isEmpty ?? true;
 
   /// Returns `true` if this operation sets at least one attribute.
   bool get isNotPlain => !isPlain;
@@ -150,9 +149,9 @@ class Operation {
 
   @override
   int get hashCode {
-    if (_attributes != null && _attributes.isNotEmpty) {
+    if (_attributes != null && (_attributes?.isNotEmpty ?? false)) {
       final attrsHash =
-          hashObjects(_attributes.entries.map((e) => hash2(e.key, e.value)));
+          hashObjects(_attributes!.entries.map((e) => hash2(e.key, e.value)));
       return hash3(key, value, attrsHash);
     }
     return hash2(key, value);
