@@ -6,30 +6,8 @@ repository: https://github.com/singerdmx/flutter-quill/
 issue_tracker: https://github.com/singerdmx/flutter-quill/issues/
 documentation: https://github.com/singerdmx/flutter-quill/
 
-topics:
-  - ui
-  - widgets
-  - widget
-  - rich-text-editor
-  - quill
 
-screenshots:
-  - description: "Screenshot 1"
-    path: example/assets/images/screenshot_1.png
-  - description: "Screenshot 2"
-    path: example/assets/images/screenshot_2.png
-  - description: "Screenshot 3"
-    path: example/assets/images/screenshot_3.png
-  - description: "Screenshot 4"
-    path: example/assets/images/screenshot_4.png
 
-platforms:
-  android:
-  ios:
-  linux:
-  macos:
-  web:
-  windows:
 
 environment:
   sdk: ">=3.1.6 <4.0.0"
@@ -62,7 +40,7 @@ dependencies:
   url_launcher: 
   flutter_keyboard_visibility: ^6.0.0
   device_info_plus: ^10.0.1
-  # super_clipboard: 0.8.10
+  # super_clipboard: 
 
 dev_dependencies:
   flutter_lints: ^3.0.2
